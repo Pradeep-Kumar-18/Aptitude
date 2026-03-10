@@ -37,8 +37,7 @@ function RegisterForm() {
           <p className="eyebrow">Professional Aptitude Assessment</p>
           <h1>Register to start your aptitude test</h1>
           <p className="muted">
-            Fill in your details carefully. Your score, student information, and location will be saved to
-            Google Sheets after submission.
+            Please fill in your details accurately to proceed. Ensure all information is correct as it will be used for your assessment record.
           </p>
           <div className="info-list">
             <div>✔ Student registration</div>

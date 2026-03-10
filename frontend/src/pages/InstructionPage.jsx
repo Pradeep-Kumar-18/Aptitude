@@ -26,7 +26,7 @@ function InstructionPage() {
             <li>You can move between questions using Next, Previous, or the question palette.</li>
             <li>Each question carries one mark.</li>
             <li>The test auto-submits when the timer reaches zero.</li>
-            <li>After submission, the backend calculates the score and returns the result page.</li>
+            <li>After submission, your score will be calculated and the result page will be displayed.</li>
           </ul>
         </div>
         <div className="btn-row">
