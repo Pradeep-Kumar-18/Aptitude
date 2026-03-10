@@ -29,7 +29,8 @@ function TestPage() {
 
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get("/api/questions");
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+        const response = await axios.get(`${API_BASE_URL}/api/questions`);
         setQuestions(response.data);
         localStorage.setItem(
           "questionIds",
@@ -72,7 +73,8 @@ function TestPage() {
 
     try {
       const questionIds = JSON.parse(localStorage.getItem("questionIds") || "[]");
-      const response = await axios.post("/api/submit", {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+      const response = await axios.post(`${API_BASE_URL}/api/submit`, {
         student,
         answers,
         questionIds,
