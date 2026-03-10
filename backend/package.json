@@ -1,0 +1,22 @@
+{
+  "name": "aptitude-backend",
+  "version": "1.0.0",
+  "description": "Backend for aptitude test app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "aptitude",
+    "express",
+    "google-sheets"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^5.1.0"
+  }
+}
