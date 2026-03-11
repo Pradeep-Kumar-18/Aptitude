@@ -9,7 +9,8 @@ const initialForm = {
   email: "",
   phone: "",
   qualification: "",
-  place: "",
+  city: "",
+  town: "",
   experienceLevel: "Fresher",
   college: "",
   passedOutYear: "",
@@ -138,9 +139,14 @@ function RegisterForm() {
               <input name="qualification" placeholder="ex: B.Tech, B.Sc" value={form.qualification} onChange={handleChange} required />
             </div>
 
-            <div className="input-container full-span">
-              <label className="input-label">Place (City/Town)</label>
-              <input name="place" placeholder="New York" value={form.place} onChange={handleChange} required />
+            <div className="input-container">
+              <label className="input-label">City</label>
+              <input name="city" placeholder="e.g. Chennai" value={form.city} onChange={handleChange} required />
+            </div>
+
+            <div className="input-container">
+              <label className="input-label">Town</label>
+              <input name="town" placeholder="e.g. Tambaram" value={form.town} onChange={handleChange} required />
             </div>
 
             <div className="input-container full-span">
