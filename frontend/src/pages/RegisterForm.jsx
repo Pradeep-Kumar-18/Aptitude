@@ -1,20 +1,47 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { UserCheck, MapPin, Clock, Navigation, BarChart3, ChevronRight } from "lucide-react";
 
 const initialForm = {
   name: "",
+  dob: "",
   email: "",
   phone: "",
+  qualification: "",
+  place: "",
+  experienceLevel: "Fresher",
   college: "",
-  department: "",
-  location: "",
+  passedOutYear: "",
+  yearsOfExperience: "",
+  role: "",
+};
+
+const infoItems = [
+  { icon: UserCheck, text: "Registration" },
+  { icon: Clock, text: "Timed test (15 mins)" },
+  { icon: Navigation, text: "Question navigation" },
+  { icon: BarChart3, text: "Result summary" },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } },
 };
 
 function RegisterForm() {
   const navigate = useNavigate();
   const [form, setForm] = useState(() => {
     const saved = localStorage.getItem("student");
-    return saved ? JSON.parse(saved) : initialForm;
+    return saved ? { ...initialForm, ...JSON.parse(saved) } : initialForm;
   });
 
   function handleChange(event) {
@@ -32,37 +59,135 @@ function RegisterForm() {
 
   return (
     <div className="page-shell">
-      <div className="hero-card register-layout">
+      <motion.div
+        className="hero-card register-layout"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <div>
-          <p className="eyebrow">Professional Aptitude Assessment</p>
-          <h1>Register to start your aptitude test</h1>
-          <p className="muted">
+          <motion.p className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+            Professional Aptitude Assessment
+          </motion.p>
+          <motion.h1 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
+            Start your aptitude test
+          </motion.h1>
+          <motion.p className="muted" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
             Please fill in your details accurately to proceed. Ensure all information is correct as it will be used for your assessment record.
-          </p>
-          <div className="info-list">
-            <div>✔ Student registration</div>
-            <div>✔ Location tracking</div>
-            <div>✔ Timed test</div>
-            <div>✔ Question navigation</div>
-            <div>✔ Result summary</div>
-          </div>
+          </motion.p>
+
+          <motion.div
+            className="info-list"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {infoItems.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <motion.div key={idx} className="info-item" variants={itemVariants}>
+                  <div className="icon-wrapper">
+                    <Icon size={18} />
+                  </div>
+                  <span>{item.text}</span>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
 
-        <form className="form-card" onSubmit={handleSubmit}>
-          <h2>Student Details</h2>
-          <div className="form-grid two-col-grid">
-            <input name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required />
-            <input name="email" type="email" placeholder="Email Address" value={form.email} onChange={handleChange} required />
-            <input name="phone" placeholder="Phone Number" value={form.phone} onChange={handleChange} required />
-            <input name="college" placeholder="College Name" value={form.college} onChange={handleChange} required />
-            <input name="department" placeholder="Department" value={form.department} onChange={handleChange} required />
-            <input name="location" placeholder="City or Town" value={form.location || ""} onChange={handleChange} required />
+        <motion.form
+          className="form-card"
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+        >
+          <h2>Candidate Details</h2>
+          <div className="form-grid">
+            <div className="input-container full-span">
+              <label className="input-label">Full Name</label>
+              <input name="name" placeholder="John Doe" value={form.name} onChange={handleChange} required />
+            </div>
+
+            <div className="input-container">
+              <label className="input-label">Date of Birth</label>
+              <input
+                name="dob"
+                type="date"
+                min="1950-01-01"
+                max={new Date().toISOString().split("T")[0]}
+                value={form.dob}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="input-container">
+              <label className="input-label">Phone Number</label>
+              <input name="phone" placeholder="123-456-7890" value={form.phone} onChange={handleChange} required />
+            </div>
+
+            <div className="input-container">
+              <label className="input-label">Email Address</label>
+              <input name="email" type="email" placeholder="john@example.com" value={form.email} onChange={handleChange} required />
+            </div>
+
+            <div className="input-container">
+              <label className="input-label">Qualification</label>
+              <input name="qualification" placeholder="ex: B.Tech, B.Sc" value={form.qualification} onChange={handleChange} required />
+            </div>
+
+            <div className="input-container full-span">
+              <label className="input-label">Place (City/Town)</label>
+              <input name="place" placeholder="New York" value={form.place} onChange={handleChange} required />
+            </div>
+
+            <div className="input-container full-span">
+              <label className="input-label">Experience Level</label>
+              <select name="experienceLevel" value={form.experienceLevel} onChange={handleChange} required>
+                <option value="Fresher">Fresher</option>
+                <option value="Experience">Experience</option>
+              </select>
+            </div>
+
+            {form.experienceLevel === "Experience" ? (
+              <>
+                <div className="input-container">
+                  <label className="input-label">Years of Experience</label>
+                  <input name="yearsOfExperience" type="number" min="1" placeholder="e.g. 2" value={form.yearsOfExperience} onChange={handleChange} required />
+                </div>
+                <div className="input-container">
+                  <label className="input-label">Role</label>
+                  <input name="role" placeholder="Software Engineer" value={form.role} onChange={handleChange} required />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="input-container">
+                  <label className="input-label">College Name</label>
+                  <input name="college" placeholder="University of Technology" value={form.college} onChange={handleChange} required />
+                </div>
+                <div className="input-container">
+                  <label className="input-label">Year of Passed Out</label>
+                  <input name="passedOutYear" type="number" placeholder="e.g. 2024" value={form.passedOutYear} onChange={handleChange} required />
+                </div>
+              </>
+            )}
           </div>
-          <button className="primary-btn wide-mobile-btn" type="submit">
+
+          <motion.button
+            className="primary-btn wide-mobile-btn"
+            type="submit"
+            style={{ width: "100%", marginTop: "16px" }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
             Continue to Instructions
-          </button>
-        </form>
-      </div>
+            <ChevronRight size={18} />
+          </motion.button>
+        </motion.form>
+      </motion.div>
     </div>
   );
 }

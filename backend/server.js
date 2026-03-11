@@ -27,7 +27,7 @@ function pickQuestions() {
 }
 
 function validateStudent(student = {}) {
-  const requiredFields = ["name", "email", "phone", "college", "department"];
+  const requiredFields = ["name", "email", "phone"];
   return requiredFields.every((field) => String(student[field] || "").trim().length > 0);
 }
 
@@ -171,9 +171,11 @@ app.post("/api/submit", async (req, res) => {
       name: student.name,
       email: student.email,
       phone: student.phone,
-      college: student.college,
-      department: student.department,
-      location: student.location || "Not Provided",
+      qualification: student.qualification,
+      place: student.place,
+      experienceLevel: student.experienceLevel,
+      college: student.college || "N/A",
+      role: student.role || "N/A",
       score,
       total: usedQuestions.length,
       submittedAt: new Date().toISOString(),

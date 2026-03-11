@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronRight, ChevronLeft, Send, AlertCircle, Loader2 } from "lucide-react";
 import QuestionCard from "../components/QuestionCard";
 import Timer from "../components/Timer";
 
@@ -98,22 +100,40 @@ function TestPage() {
   if (error && questions.length === 0) {
     return (
       <div className="page-shell">
-        <div className="content-card narrow-card center-text">
+        <motion.div 
+          className="content-card narrow-card center-text error-text"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <AlertCircle size={48} style={{ margin: "0 auto 16px" }} />
           <h2>{error}</h2>
           <p className="muted">Make sure backend is running on port 5000.</p>
-          <button className="primary-btn" onClick={() => window.location.reload()}>Retry</button>
-        </div>
+          <button className="primary-btn mt-24" onClick={() => window.location.reload()} style={{ marginTop: "24px" }}>
+            Retry
+          </button>
+        </motion.div>
       </div>
     );
   }
 
   if (!questions.length) {
     return (
-      <div className="page-shell">
-        <div className="content-card narrow-card center-text">
-          <h2>Loading questions...</h2>
-          <p className="muted">Please wait while the test is being prepared.</p>
-        </div>
+      <div className="page-shell" style={{ alignItems: "center", justifyContent: "center" }}>
+        <motion.div 
+          className="center-text"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            style={{ display: "inline-block", color: "var(--primary)", marginBottom: "16px" }}
+          >
+            <Loader2 size={40} />
+          </motion.div>
+          <h2>Preparing your test...</h2>
+          <p className="muted">Good luck, {student.name}!</p>
+        </motion.div>
       </div>
     );
   }
@@ -123,88 +143,88 @@ function TestPage() {
 
   return (
     <div className="page-shell">
-      <div className="test-layout">
+      <motion.div 
+        className="test-layout"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
         <aside className="sidebar-card">
           <div>
             <p className="eyebrow">Candidate</p>
-            <h3>{student.name}</h3>
-            <p className="muted small-text">{student.college}</p>
+            <h3 style={{ margin: "4px 0" }}>{student.name}</h3>
+            <p className="muted small-text" style={{ margin: 0 }}>
+              {student.qualification} - {student.experienceLevel}
+            </p>
           </div>
 
           <Timer timeLeft={timeLeft} />
 
           <div className="summary-box">
-            <div>
+            <div className="summary-card accent">
               <span>Answered</span>
               <strong>{answeredCount}/{questions.length}</strong>
             </div>
-            <div>
-              <span>Unanswered</span>
+            <div className="summary-card">
+              <span>Remaining</span>
               <strong>{questions.length - answeredCount}</strong>
-            </div>
-          </div>
-
-          <div>
-            <p className="palette-title">Question Palette</p>
-            <div className="palette-grid">
-              {questions.map((question, index) => (
-                <button
-                  key={question.id}
-                  type="button"
-                  className={`palette-btn ${currentIndex === index ? "active" : ""} ${answers[question.id] ? "answered" : ""}`}
-                  onClick={() => setCurrentIndex(index)}
-                >
-                  {index + 1}
-                </button>
-              ))}
             </div>
           </div>
         </aside>
 
         <section className="main-panel">
-          <QuestionCard
-            question={currentQuestion}
-            currentIndex={currentIndex}
-            total={questions.length}
-            selectedAnswer={answers[currentQuestion.id] || ""}
-            onSelect={handleSelect}
-          />
+          <AnimatePresence mode="wait">
+            <QuestionCard
+              key={currentQuestion.id} // Important for triggering unmount/mount animations
+              question={currentQuestion}
+              currentIndex={currentIndex}
+              total={questions.length}
+              selectedAnswer={answers[currentQuestion.id] || ""}
+              onSelect={handleSelect}
+            />
+          </AnimatePresence>
 
-          {error ? <p className="error-text">{error}</p> : null}
+          {error && (
+            <motion.div 
+              className="error-text"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <AlertCircle size={18} style={{ display: "inline", marginRight: "8px", verticalAlign: "middle" }} />
+              {error}
+            </motion.div>
+          )}
 
           <div className="btn-row between">
-            <button
-              className="secondary-btn"
-              type="button"
-              disabled={currentIndex === 0}
-              onClick={() => setCurrentIndex((prev) => prev - 1)}
-            >
-              Previous
-            </button>
+            <div /> {/* Spacer to keep Next button on the right */}
 
             <div className="btn-row">
               {currentIndex < questions.length - 1 ? (
                 <button
                   className="primary-btn"
                   type="button"
+                  disabled={!answers[currentQuestion.id]}
                   onClick={() => setCurrentIndex((prev) => prev + 1)}
                 >
-                  Submit
+                  Next
+                  <ChevronRight size={18} />
                 </button>
               ) : (
                 <button
                   className="primary-btn"
                   type="button"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !answers[currentQuestion.id]}
                   onClick={() => submitTest(false)}
+                  style={{ background: "linear-gradient(135deg, #10b981, #059669)" }}
                 >
                   {isSubmitting ? "Submitting..." : "Submit Test"}
+                  {!isSubmitting && <Send size={18} />}
                 </button>
               )}
             </div>
           </div>
         </section>
-      </div>
+      </motion.div>
     </div>
   );
 }
